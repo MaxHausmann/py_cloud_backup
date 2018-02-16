@@ -21,7 +21,4 @@ class CloudService(ABC):
     def create_dir(self):
         pass
 
-    def test(self):
-        pass
-
 
