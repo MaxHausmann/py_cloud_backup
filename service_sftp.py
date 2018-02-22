@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
+from service_abc import Service
 
 
-class CloudService(ABC):
+class ServiceSFTP(Service):
+
+    CHUNK_SIZE = 32767
 
     def __init__(self):
         pass
@@ -9,7 +11,7 @@ class CloudService(ABC):
     def get_dirs(self):
         pass
 
-    def get_chunk(self):
+    def chunk(self):
         pass
 
     def open(self):
@@ -20,5 +22,3 @@ class CloudService(ABC):
 
     def create_dir(self):
         pass
-
-
