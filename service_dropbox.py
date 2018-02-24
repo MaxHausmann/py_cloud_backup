@@ -1,7 +1,6 @@
 from service_abc import Service
 from dropbox import Dropbox
 from contextlib import ContextDecorator
-from contextlib import closing
 
 from dropbox.files import (
     FileMetadata,
@@ -58,11 +57,11 @@ class ServiceDropbox(Service):
                 r.append(Folder(entry.name, entry.path_lower))
         return r
 
-    def chunk(self, target, size, offset=0):
+    def chunk(self, path, size, offset=0):
         p_session = session()
         dbx_p = Dropbox(oauth2_access_token=self._access_token, headers={
             "Range": "bytes=" + str(offset) + "-" + str(offset + size)}, session=p_session)  # fetch chunks from dropbox
-        meta, response = dbx_p.files_download(target)
+        meta, response = dbx_p.files_download(path)
         f = File(meta.name, meta.path_lower, meta.client_modified, meta.client_modified)
         p_session.close()
         return f, response.content
