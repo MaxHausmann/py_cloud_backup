@@ -32,6 +32,7 @@ class ServiceDropbox(Service):
     def exists(self, path):
         """
         check whether file exists or not
+
         :param path: file-path
         :return: True, if file exists or False if not
         :raise: ApiError on other dbx errors
@@ -46,9 +47,21 @@ class ServiceDropbox(Service):
                 raise
 
     def delete(self, path):
+        """
+        delete some dir or file
+
+        :param path: path to delete
+        """
         self._dbx.files_delete_v2(path)
 
     def dirs(self, path, recursive=True):
+        """
+        return files and dirs in current folder
+
+        :param path: current folder
+        :param recursive: go deeper?
+        :return: list with files/dirs
+        """
         r = []
         for entry in self._dbx.files_list_folder(path, recursive).entries:
             if isinstance(entry, FileMetadata):
@@ -58,6 +71,14 @@ class ServiceDropbox(Service):
         return r
 
     def chunk(self, path, size, offset=0):
+        """
+        return one chunk of file
+
+        :param path: filepath
+        :param size: chunk-size
+        :param offset: bits from the beginning
+        :return: tuple(File obj, content)
+        """
         p_session = session()
         dbx_p = Dropbox(oauth2_access_token=self._access_token, headers={
             "Range": "bytes=" + str(offset) + "-" + str(offset + size)}, session=p_session)  # fetch chunks from dropbox
@@ -70,6 +91,7 @@ class ServiceDropbox(Service):
         """
         imitates open-method of python by using context-manager,
         so you can use "with" statement
+
         :return: interateable object
         """
         class _OpenStreamSession(ContextDecorator):
@@ -95,4 +117,9 @@ class ServiceDropbox(Service):
         return _OpenStreamSession(self._dbx)
 
     def create_dir(self, path):
+        """
+        create dir at specific location
+
+        :param path: location to create dir
+        """
         self._dbx.files_create_folder_v2(path)

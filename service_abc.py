@@ -5,24 +5,24 @@ class Service(ABC):
 
     @classmethod
     def exists(cls, path):
-        pass
+        raise NotImplementedError("Method must be implemented!")
 
     @classmethod
     def delete(cls, path):
-        pass
+        raise NotImplementedError("Method must be implemented!")
 
     @classmethod
     def dirs(cls, path, recursive=True):
-        pass
+        raise NotImplementedError("Method must be implemented!")
 
     @classmethod
     def chunk(cls, path, size, offset=0):
-        pass
+        raise NotImplementedError("Method must be implemented!")
 
     @classmethod
     def file(cls, path):
-        pass
+        raise NotImplementedError("Method must be implemented!")
 
     @classmethod
     def create_dir(cls, path):
-        pass
+        raise NotImplementedError("Method must be implemented!")

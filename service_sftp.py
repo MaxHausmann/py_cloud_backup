@@ -8,17 +8,20 @@ class ServiceSFTP(Service):
     def __init__(self):
         pass
 
-    def get_dirs(self):
+    def exists(self, path):
+        pass
+    
+    def delete(self, path):
         pass
 
-    def chunk(self):
+    def dirs(self, path, recursive=True):
         pass
 
-    def open(self):
+    def chunk(self, path, size, offset=0):
         pass
 
-    def connect(self):
+    def file(self, path):
         pass
 
-    def create_dir(self):
+    def create_dir(self, path):
         pass
