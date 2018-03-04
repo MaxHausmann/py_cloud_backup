@@ -1,17 +1,12 @@
 from unittest import TestCase
-from service_dropbox import ServiceDropbox
+from py_cloud_backup.service_dropbox import ServiceDropbox
 from credentials import credentials as c
 from os import remove
 from dropbox.exceptions import (
     ApiError,
 )
 
-from dropbox.files import (
-    GetMetadataError,
-    LookupError
-)
-
-from data import (
+from py_cloud_backup.data import (
     File,
     Folder
 )
@@ -29,7 +24,7 @@ class TestServiceDropbox(TestCase):
             self._dbx._dbx.files_get_metadata(path)
             return True
         except ApiError as e:
-            if e.error.is_path and isinstance(e.error.get_path(), LookupError):
+            if e.error.get_path().is_not_found():
                 return False
             else:
                 raise
@@ -42,13 +37,16 @@ class TestServiceDropbox(TestCase):
         self.assertFalse(self.file_exists(delete_file))
 
     def test_exists(self):
-        self.assertTrue(self._dbx.exists(TEST_FOLDER+"/exist_test.txt"))
+        exist_path = TEST_FOLDER+"/exist_test.txt"
+        no_exist_path = TEST_FOLDER+"/doesnt.txt"
+        self.assertEqual(self.file_exists(exist_path), self._dbx.exists(exist_path))
+        self.assertEqual(self.file_exists(no_exist_path), self._dbx.exists(no_exist_path))
 
     def test_dirs(self):
-        data = self._dbx.dirs(TEST_FOLDER+"/dirs_test")
+        data = self._dbx.dirs(TEST_FOLDER+"/dirs_test/")
         # should be equal with data in test folder
         self.assertEqual(sum(isinstance(x, File) for x in data), 17)
-        self.assertEqual(sum(isinstance(x, Folder) for x in data), 3)
+        self.assertEqual(sum(isinstance(x, Folder) for x in data), 2)
 
     def test_chunk(self):
         file, content = self._dbx.chunk(TEST_FOLDER+"/chunk_test.txt", 20, 456)

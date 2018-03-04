@@ -1,4 +1,4 @@
-from service_abc import Service
+from py_cloud_backup.service_abc import Service
 from dropbox import Dropbox
 from contextlib import ContextDecorator
 
@@ -11,9 +11,11 @@ from dropbox.files import (
 
 from requests.sessions import session
 
-from dropbox.exceptions import ApiError
+from dropbox.exceptions import (
+    ApiError
+)
 
-from data import (
+from py_cloud_backup.data import (
     File,
     Folder
 )
@@ -22,6 +24,11 @@ from data import (
 class ServiceDropbox(Service):
 
     def __init__(self, access_token):
+        """
+        starts a new connection to dropbox
+
+        :param access_token:
+        """
         self._access_token = access_token
         self._session = session()
         self._dbx = Dropbox(oauth2_access_token=self._access_token, session=self._session)
@@ -32,16 +39,15 @@ class ServiceDropbox(Service):
     def exists(self, path):
         """
         check whether file exists or not
-
-        :param path: file-path
-        :return: True, if file exists or False if not
+        :param str path: file_path
+        :return bool : True, if file exists or False if not
         :raise: ApiError on other dbx errors
         """
         try:
             self._dbx.files_get_metadata(path)
             return True
         except ApiError as e:
-            if e.error.is_path and isinstance(e.error.get_path(), LookupError):
+            if e.error.get_path().is_not_found():
                 return False
             else:
                 raise
@@ -64,10 +70,13 @@ class ServiceDropbox(Service):
         """
         r = []
         for entry in self._dbx.files_list_folder(path, recursive).entries:
+            file_name_len = len(entry.name)
+            if path.split("/")[-2] == entry.name:
+                continue
             if isinstance(entry, FileMetadata):
-                r.append(File(entry.name, entry.path_lower, entry.client_modified, entry.client_modified))
+                r.append(File(entry.name, entry.path_lower[0:-file_name_len].lstrip("/"), entry.client_modified, entry.client_modified))
             elif isinstance(entry, FolderMetadata):
-                r.append(Folder(entry.name, entry.path_lower))
+                r.append(Folder(entry.name, entry.path_lower[0:-file_name_len].lstrip("/")))
         return r
 
     def chunk(self, path, size, offset=0):
