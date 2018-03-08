@@ -72,7 +72,9 @@ class TestServiceSFTP(TestCase):
         self.assertEqual(sum(isinstance(x, Folder) for x in data), 2)
 
     def test_chunk(self):
-        self.fail()
+        file, content = self._sftp.chunk(self._root, "chunk_test.txt", 20, 456)
+        self.assertEqual("chunk_test.txt", file.get_name())
+        self.assertEqual(b'r f\xfcr Tabelle `analy', content)  # test string which is in file
 
     def test_file(self):
         self.fail()

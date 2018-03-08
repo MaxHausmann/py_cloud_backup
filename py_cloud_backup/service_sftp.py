@@ -115,8 +115,25 @@ class ServiceSFTP(Service):
         _recursive_runner(path)
         return r
 
-    def chunk(self, path, size, offset=0):
-        pass
+    def chunk(self, path, filename, size, offset=0):
+        """
+        returns a chunk of the target file
+
+        :param str path: path on server
+        :param str filename: name of file
+        :param int size: chunk-size
+        :param int offset: offset from 0
+        :return: tuple(File, content)
+        """
+        target = path+"/"+filename
+        f = self._sftp.file(target, "r")
+        f.seek(offset, 0)
+        r = f.read(size)
+        f.close()
+        stat = self._sftp.stat(target)
+        time = datetime.fromtimestamp(stat.st_mtime)
+        file = File(filename, path, time, time)
+        return file, r
 
     def file(self, path):
         pass

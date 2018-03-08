@@ -27,7 +27,7 @@ class ServiceDropbox(Service):
         """
         starts a new connection to dropbox
 
-        :param access_token:
+        :param str access_token: dbx access token
         """
         self._access_token = access_token
         self._session = session()
@@ -56,7 +56,7 @@ class ServiceDropbox(Service):
         """
         delete some dir or file
 
-        :param path: path to delete
+        :param str path: path to delete
         """
         self._dbx.files_delete_v2(path)
 
@@ -64,8 +64,8 @@ class ServiceDropbox(Service):
         """
         return files and dirs in current folder
 
-        :param path: current folder
-        :param recursive: go deeper?
+        :param str path: current folder
+        :param bool recursive: go deeper?
         :return: list with files/dirs
         """
         r = []
@@ -79,19 +79,20 @@ class ServiceDropbox(Service):
                 r.append(Folder(entry.name, entry.path_lower[0:-file_name_len].lstrip("/")))
         return r
 
-    def chunk(self, path, size, offset=0):
+    def chunk(self, path, filename, size, offset=0):
         """
         return one chunk of file
 
-        :param path: filepath
-        :param size: chunk-size
-        :param offset: bits from the beginning
+        :param str path: path on server
+        :param str filename: name of file
+        :param int size: chunk-size
+        :param int offset: bits from the beginning
         :return: tuple(File obj, content)
         """
         p_session = session()
         dbx_p = Dropbox(oauth2_access_token=self._access_token, headers={
-            "Range": "bytes=" + str(offset) + "-" + str(offset + size)}, session=p_session)  # fetch chunks from dropbox
-        meta, response = dbx_p.files_download(path)
+            "Range": "bytes=" + str(offset) + "-" + str(offset + size - 1)}, session=p_session)  # fetch chunks from dropbox
+        meta, response = dbx_p.files_download(path+"/"+filename)
         f = File(meta.name, meta.path_lower, meta.client_modified, meta.client_modified)
         p_session.close()
         return f, response.content

@@ -49,9 +49,9 @@ class TestServiceDropbox(TestCase):
         self.assertEqual(sum(isinstance(x, Folder) for x in data), 2)
 
     def test_chunk(self):
-        file, content = self._dbx.chunk(TEST_FOLDER+"/chunk_test.txt", 20, 456)
+        file, content = self._dbx.chunk(TEST_FOLDER, "chunk_test.txt", 20, 456)
         self.assertEqual("chunk_test.txt", file.get_name())
-        self.assertEqual(b'r f\xfcr Tabelle `analys', content)  # test string which is in file
+        self.assertEqual(b'r f\xfcr Tabelle `analy', content)  # test string which is in file
 
     def test_open_file(self):
         testfile_name = "creation_test.txt"

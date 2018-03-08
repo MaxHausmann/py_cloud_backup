@@ -16,7 +16,7 @@ class Service(ABC):
         raise NotImplementedError("Method must be implemented!")
 
     @classmethod
-    def chunk(cls, path, size, offset=0):
+    def chunk(cls, path, filename, size, offset=0):
         raise NotImplementedError("Method must be implemented!")
 
     @classmethod
