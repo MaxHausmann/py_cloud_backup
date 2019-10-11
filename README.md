@@ -1,6 +1,7 @@
-# py_cloud_backup
+# py_cloud_backup [DISCONTINUED]
 
 Cloud backup solution written in python.
+No further development, feel free to use the code for your own purposes.
 
 ## Goals
 - [x] First creepy test: transfer data from dropbox to sftp server
@@ -12,5 +13,3 @@ Cloud backup solution written in python.
 - [ ] First release
 
 ## current version 0.0.1
-
-### more informations soon!
